@@ -25,7 +25,7 @@ exports.sendDMNotification = functions.firestore.document('/dm_threads/{thread_i
             let tokens = querySnapshot.docs;
 
 
-            tokens.map((token)=>{
+            const promises = tokens.map((token)=>{
 
                 let token_id = token;
 
@@ -39,14 +39,10 @@ exports.sendDMNotification = functions.firestore.document('/dm_threads/{thread_i
                 };
 
 
-                admin.messaging().sendToDevice(token_id, payload).then(response => {
-
-                    console.log('Notification sent to device with ID: ' + token_id)
-
-                });
+                return admin.messaging().sendToDevice(token_id, payload)
 
             })
-           Promise.all(tokens);
+           return Promise.all(promises);
 
         });
 
